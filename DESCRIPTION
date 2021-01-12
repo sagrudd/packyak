@@ -23,4 +23,8 @@ VignetteBuilder: knitr
 Imports: 
     cli,
     stringr,
-    R6
+    R6,
+    httr,
+    rvest,
+    lubridate,
+    git2r
