@@ -15,8 +15,12 @@ PackYak = R6::R6Class(
       } else if (self$is_bioconductor_resource()) {
         cli::cli_alert_success("successfully loaded a Bioconductor page")
       } else {
-
+        cli::cli_alert_warning("This package cannot be found at BioC or CRAN")
+        stop()
       }
+
+      # follow the links
+      private$package_page$follow_links()
     },
 
 

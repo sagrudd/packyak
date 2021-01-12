@@ -4,6 +4,10 @@ RPackage = R6::R6Class(
 
     get_version = function() {
       return(private$version)
+    },
+
+    follow_links = function() {
+      cli::cli_alert("following package links")
     }
 
   ),
