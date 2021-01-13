@@ -38,7 +38,7 @@ sudo visudo
 
 
 sudo yum install rpm-build git rpm-devel rpmlint rpmdevtools
-sudo yum install libpng-devel bzip2-libs xz-devel libjpeg-devel openssl-devel
+sudo yum install libpng-devel bzip2-libs xz-devel libjpeg-devel openssl-devel icu
 
 
 
@@ -46,5 +46,8 @@ install.packages(c("cli", "stringr", "R6", "httr", "rvest", "lubridate", "git2r"
 
 
 packyak::PackYak$new(c("cli", "stringr", "R6", "httr", "rvest", "lubridate", "git2r", "knitr", "testthat", "rmarkdown"), build_rpm=TRUE)
+
+
+packyak::PackYak$new(c("dplyr", "rlang", "purrr", "lubridate", "R6", "ggplot2", "RColorBrewer", "reshape2", "readr", "tidyr", "emojifont", "magrittr", "tibble", "aws.s3", "Rcpp", "Rsamtools", "cli", "stringr", "ShortRead"), build_rpm=TRUE)
 
 

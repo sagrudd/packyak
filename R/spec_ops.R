@@ -193,8 +193,11 @@ SpecOps = R6::R6Class(
       if(!is.null(sys_reqs)) {
         cli::cli_alert(stringr::str_interp("linking sys_reqs [${paste(sys_reqs)}]"))
         for (dep in sys_reqs) {
-          build_requires <- paste(build_requires, private$pkgobj$get_package_id(dep))
-          requires <- paste(requires, private$pkgobj$get_package_id(dep))
+          feature <- private$pkgobj$get_package_id(dep)
+          if (!is.null(feature) && !feature=="NULL") {
+            build_requires <- paste(build_requires, feature)
+            requires <- paste(requires, feature)
+          }
         }
       }
 

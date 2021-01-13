@@ -67,6 +67,9 @@ PackageHandler = R6::R6Class(
         fname <- tools::file_path_sans_ext(basename(spec_o$get_spec_file()))
         version <- self$get_version()
         release <- self$get_release()
+        if (is.null(fedora_release)) {
+          fedora_release <- gsub("^.*\\.", "", gsub(paste0(".", architecture), "", system("uname -r", intern=TRUE)))
+        }
         RPM <- file.path(
           "RPMS",
           architecture,
@@ -86,10 +89,6 @@ PackageHandler = R6::R6Class(
           if (!status2 == 0) {
             cli::cli_alert_warning(stringr::str_interp("command ${command2} exited with fail code [${status2}]"))
             stop()
-          }
-
-          if (is.null(fedora_release)) {
-            fedora_release <- gsub("^.*\\.", "", gsub(paste0(".", architecture), "", system("uname -r", intern=TRUE)))
           }
 
           cli::cli_alert_info(stringr::str_interp("checking for RPM at [${RPM}]"))
@@ -139,7 +138,7 @@ PackageHandler = R6::R6Class(
     clean_up_filters = c(
       "methods", "R", "Matrix", "mgcv", "nlme", "MASS", "utils",
       "splines", "lattice", "datasets", "grid", "stats", "tools",
-      "grDevices", "parallel", "graphics", "tcltk", "S4Vectors", "stats4"),
+      "grDevices", "parallel", "graphics", "tcltk", "stats4"),
 
 
     get_value_from_table = function(key, table) {
