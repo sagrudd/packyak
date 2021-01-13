@@ -14,7 +14,6 @@ PackageStrategy = R6::R6Class(
     add_imports = function(items) {
       novels <- NULL
       for (item in items) {
-        print(item)
         if (item %in% private$imports_list) {
           cli::cli_alert(
             stringr::str_interp("[${item}] already defined as imports package"))
@@ -29,6 +28,11 @@ PackageStrategy = R6::R6Class(
     },
 
     add_sys_reqs = function(items) {
+      clean_up_filters = c("C++11", "libbz2 & liblzma & libcurl")
+      if (any(clean_up_filters %in% items)) {
+        items <- items[-which(items %in% clean_up_filters)]
+      }
+
       for (item in items) {
         if (item == "GNU make")
           self$register(item, "make")
@@ -36,9 +40,15 @@ PackageStrategy = R6::R6Class(
           self$register(item, "libcurl-devel")
         else if (grepl("libxml2", item))
           self$register(item, "libcurl-devel")
+        else if (item == "libpng")
+          self$register(item, "libpng-devel")
+        else if (item == "libjpeg")
+          self$register(item, "libjpeg-devel")
+        else if (item == "ICU4C")
+           self$register(item, "icu")
         else {
           cli::cli_alert_warning(stringr::str_interp("new sys_req [${item}]"))
-          stop()
+          # stop()
         }
       }
 

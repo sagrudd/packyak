@@ -17,6 +17,34 @@ knitr::opts_chunk$set(
 [stephen@localhost rpmbuild]$ git config --global user.name "sagrudd"
 [stephen@localhost rpmbuild]$ git config --global user.email "stephen@mnemosyne.co.uk"
 
+xurl <- "https://bioconductor.org/packages/release/bioc/html/ShortRead.html"
+xcontent <- httr::GET(xurl)
+xtables <- rvest::html_nodes(httr::content(xcontent, encoding="UTF-8"), "table")
+
+
+
+
 ```{r setup}
 library(packyak)
 ```
+
+# starting with a basic server version of fedora 33
+sudo yum install R
+
+# enable password free sudo access
+
+sudo visudo
+<username>     ALL=(ALL) NOPASSWD:ALL
+
+
+sudo yum install rpm-build git rpm-devel rpmlint rpmdevtools
+sudo yum install libpng-devel bzip2-libs xz-devel libjpeg-devel openssl-devel
+
+
+
+install.packages(c("cli", "stringr", "R6", "httr", "rvest", "lubridate", "git2r"))
+
+
+packyak::PackYak$new(c("cli", "stringr", "R6", "httr", "rvest", "lubridate", "git2r", "knitr", "testthat", "rmarkdown"), build_rpm=TRUE)
+
+

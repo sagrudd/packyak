@@ -4,7 +4,7 @@ PackYak = R6::R6Class(
   "PackYak",
   public = list(
 
-    initialize = function(pkgname, strategy=NULL) {
+    initialize = function(pkgname, strategy=NULL, build_rpm=FALSE, overwrite=FALSE) {
       cli::cli_alert(
         stringr::str_interp(
           "creating RPM file from package [{pkgname}]"))
@@ -15,13 +15,31 @@ PackYak = R6::R6Class(
         private$strategy <- strategy
         private$strategy$print()
       }
-      if (self$is_cran_resource()) {
-        cli::cli_alert_success("successfully loaded a CRAN page")
-      } else if (self$is_bioconductor_resource()) {
-        cli::cli_alert_success("successfully loaded a Bioconductor page")
+
+      if (is.character(pkgname) && length(pkgname) > 1) {
+        cli::cli_alert_info("processing a vector of entries ...")
+        for (p in pkgname) {
+          child <- PackYak$new(p, private$strategy, build_rpm, overwrite)
+        }
       } else {
-        cli::cli_alert_warning("This package cannot be found at BioC or CRAN")
-        stop()
+
+
+        if (self$is_cran_resource()) {
+          cli::cli_alert_success("successfully loaded a CRAN page")
+        } else if (self$is_bioconductor_resource()) {
+          cli::cli_alert_success("successfully loaded a Bioconductor page")
+        } else if (self$is_bioconductor_annotation()) {
+          cli::cli_alert_success("successfully loaded a Bioconductor annotation page")
+        } else {
+          cli::cli_alert_warning("This package cannot be found at BioC or CRAN")
+          stop()
+        }
+
+        if (!is.null(private$package_page)) {
+          cli::cli_alert_success("Proto-package object created")
+          private$package_page$install_package(build_rpm=build_rpm, overwrite=overwrite)
+        }
+
       }
 
     },
@@ -43,7 +61,19 @@ PackYak = R6::R6Class(
       cli::cli_alert(stringr::str_interp("checking bioc [{bioc}]"))
       lookup <- httr::GET(bioc)
       if (lookup$status_code == 200) {
-        private$package_page <- Bioconductor$new(private$package_name, lookup, bioc)
+        private$package_page <- Bioconductor$new(private$package_name, lookup, private$strategy, bioc)
+        return(TRUE)
+      }
+      return(FALSE)
+    },
+
+
+    is_bioconductor_annotation = function() {
+      bioc <- stringr::str_interp("https://bioconductor.org/packages/release/data/annotation/html/${private$package_name}.html")
+      cli::cli_alert(stringr::str_interp("checking bioc - annotation - [{bioc}]"))
+      lookup <- httr::GET(bioc)
+      if (lookup$status_code == 200) {
+        private$package_page <- Bioconductor$new(private$package_name, lookup, private$strategy, bioc)
         return(TRUE)
       }
       return(FALSE)
@@ -55,7 +85,7 @@ PackYak = R6::R6Class(
   private = list(
     strategy = NA,
     package_name = NA,
-    package_page = NA
+    package_page = NULL
   )
 )
 
