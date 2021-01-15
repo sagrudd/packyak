@@ -1,12 +1,13 @@
 Package: packyak
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.1.9005
+Version: 0.0.2
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person(
+            "Stephen", "Rudd",
+            email = "stephen@mnemosyne.co.uk",
+            role = c("aut", "cre"),
+            comment = c(ORCID = "0000-0002-0344-7487")
+    )
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
     pick a license
