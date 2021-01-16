@@ -4,17 +4,34 @@ PackYak:
     - b
     - c
   x86_64:
-    - devtools
-    - BiocManager
-    - testthat
-    - rmarkdown
-    - knitr
-    - cli
-    - stringr
-    - R6
-    - httr
-    - rvest
-    - lubridate
-    - git2r
-    - yaml
     - affy
+    - aws.s3
+    - BiocManager
+    - cli
+    - devtools
+    - dplyr
+    - emojifont
+    - ggplot2
+    - git2r
+    - httr
+    - knitr
+    - lubridate
+    - magrittr
+    - purrr
+    - R6
+    - RColorBrewer
+    - Rcpp
+    - readr
+    - reshape2
+    - rhdf5
+    - rlang
+    - rmarkdown
+    - Rsamtools
+    - rvest
+    - ShortRead
+    - stringr
+    - testthat
+    - tibble
+    - tidyr
+    - yaml
+

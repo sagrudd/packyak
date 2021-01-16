@@ -29,4 +29,5 @@ Imports:
     rvest,
     lubridate,
     git2r,
-    yaml
+    yaml,
+    tibble
