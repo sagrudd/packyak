@@ -1,5 +1,5 @@
 PackYak:
-  aarch:
+  aarch64:
     - affy
     - aws.s3
     - BiocManager
