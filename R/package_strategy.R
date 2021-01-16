@@ -37,10 +37,10 @@ PackageStrategy = R6::R6Class(
       items <- gsub("\\s.*","", items)
       items <- gsub(":.*", "", items)
       items <- gsub("\\).*", "", items)
-      strip_vals = c("GNU", "Subversion", "Package", "optional")
+      strip_vals = c("GNU", "Subversion", "Package", "optional", "C++11", "Optional")
       items <- items[!items %in% strip_vals]
 
-      atomics <- c("xclip", "libxml2", "libgit2", "git", "libxml2-devel", "pandoc")
+      atomics <- c("xclip", "libxml2", "libgit2", "git", "libxml2-devel", "pandoc", "libsecret-devel")
       for (item in items[items %in% atomics]) {
         self$register(item, item)
       }
@@ -50,7 +50,14 @@ PackageStrategy = R6::R6Class(
         "libcurl" = "libcurl-devel",
         "GNU make" = "make",
         "OpenSSL" = "openssl",
-        ICU4C = "icu"
+        ICU4C = "icu",
+        zlib = "zlib-devel",
+        libpng = "libpng-devel",
+        FreeType = "freetype",
+        libbz2 = "bzip2-devel",
+        libjpeg = "libjpeg-turbo",
+        libsodium = "libsodium-devel",
+        libpq = "libpq-devel"
       )
 
       for (item in items) {

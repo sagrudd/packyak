@@ -58,57 +58,10 @@ PackageHandler = R6::R6Class(
 
       spec_o <- private$install_me(overwrite, fedora=fedora)
 
-      if (build_rpm) {
+      print(spec_o)
+
+      if (build_rpm && !is.null(spec_o)) {
         fedora$spec2rpm(self, spec_o$get_spec_file())
-      }
-
-
-      if (build_rpm && 0 > 1) {
-        cli::cli_alert_info(stringr::str_interp("Trying to build RPM package with [${spec_o$get_spec_file()}]"))
-
-        # where will the RPM file be found?
-        architecture <- system("uname -m", intern = TRUE)
-        fname <- tools::file_path_sans_ext(basename(spec_o$get_spec_file()))
-        version <- self$get_version()
-        release <- self$get_release()
-        if (is.null(fedora_release)) {
-          fedora_release <- gsub("^.*\\.", "", gsub(paste0(".", architecture), "", system("uname -r", intern=TRUE)))
-        }
-        RPM <- file.path(
-          "RPMS",
-          architecture,
-          paste0(fname, "-", version, "-", release, ".", fedora_release, ".", architecture, ".rpm"))
-
-        if (spec_o$is_updated() || !file.exists(RPM)) {
-
-          command1 <- stringr::str_interp("spectool -g -R ${spec_o$get_spec_file()}")
-          status1 <- system(command1)
-          if (!status1 == 0) {
-            cli::cli_alert_warning(stringr::str_interp("command ${command1} exited with fail code [${status1}]"))
-            stop()
-          }
-
-          command2 <- stringr::str_interp("rpmbuild -ba ${spec_o$get_spec_file()}")
-          status2 <- system(command2)
-          if (!status2 == 0) {
-            cli::cli_alert_warning(stringr::str_interp("command ${command2} exited with fail code [${status2}]"))
-            stop()
-          }
-
-          cli::cli_alert_info(stringr::str_interp("checking for RPM at [${RPM}]"))
-          if (!file.exists(RPM)) {
-            cli::cli_alert_danger("RPM file not found")
-            stop()
-          } else {
-            command3 <- stringr::str_interp("sudo yum install -y ${RPM}")
-            status3 <- system(command3)
-            if (!status3 == 0) {
-              cli::cli_alert_warning(stringr::str_interp("command ${command3} exited with fail code [${status3}]"))
-              stop()
-            }
-          }
-        }
-
       }
     }
 
@@ -201,6 +154,7 @@ PackageHandler = R6::R6Class(
     install_me = function(overwrite, fedora) {
       if (private$strategy$is_installed(private$pkgname)) {
         cli::cli_alert_info(stringr::str_interp("package [${private$pkgname}] has already been installed"))
+        return(NULL)
       } else {
         cli::cli_alert_info(stringr::str_interp("installing package [${private$pkgname}]"))
         so <- SpecOps$new(self, fedora=fedora, overwrite=overwrite)

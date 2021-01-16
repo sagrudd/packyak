@@ -1,22 +1,59 @@
 PackYak:
   aarch:
-    - a
-    - b
-    - c
-  x86_64:
     - affy
     - aws.s3
     - BiocManager
     - cli
+    - DBI
+    - dbplyr
     - devtools
     - dplyr
     - emojifont
     - ggplot2
     - git2r
     - httr
+    - keyring
     - knitr
     - lubridate
     - magrittr
+    - openssl
+    - optparse
+    - purrr
+    - R6
+    - RColorBrewer
+    - Rcpp
+    - readr
+    - reshape2
+    - rlang
+    - rmarkdown
+    - RPostgres
+    - Rsamtools
+    - rvest
+    - ShortRead
+    - stringr
+    - testthat
+    - tibble
+    - tidyr
+    - yaml
+  x86_64:
+    - affy
+    - aws.s3
+    - BiocManager
+    - cli
+    - DBI
+    - dbplyr
+    - devtools
+    - dplyr
+    - emojifont
+    - ggplot2
+    - git2r
+    - httr
+    - keyring
+    - knitr
+    - lubridate
+    - magrittr
+    - openssl
+    - optparse
     - purrr
     - R6
     - RColorBrewer
@@ -26,6 +63,7 @@ PackYak:
     - rhdf5
     - rlang
     - rmarkdown
+    - RPostgres
     - Rsamtools
     - rvest
     - ShortRead

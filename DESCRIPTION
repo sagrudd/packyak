@@ -1,5 +1,5 @@
 Package: packyak
-Title: What the Package Does (One Line, Title Case)
+Title: An automated framework for preparing RPM repos of R packages
 Version: 0.0.2
 Authors@R: 
     person(
