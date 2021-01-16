@@ -8,12 +8,13 @@ SpecOps = R6::R6Class(
   "SpecOps",
   public = list(
 
-    initialize = function(pkgobj, overwrite=FALSE) {
+    initialize = function(pkgobj, fedora, overwrite=FALSE) {
       cli::cli_h1(
         stringr::str_interp(
           "checking SPEC file for [${pkgobj$get_pkg_name()}]"))
 
       private$pkgobj <- pkgobj
+      private$fedora <- fedora
       private$set_name()
 
       if (self$file_exists() & overwrite) {
@@ -44,9 +45,10 @@ SpecOps = R6::R6Class(
       }
     },
 
-    file_exists = function() {
-      private$spec_file = file.path("SPECS", paste0(private$pkgname, ".spec"))
-      # cli::cli_alert(stringr::str_interp("looking for file [${private$spec_file}]"))
+    file_exists = function(fedora) {
+      private$spec_file = file.path(
+        private$fedora$get_rpmbuild_dir(),
+        "SPECS", paste0(private$pkgname, ".spec"))
       return(file.exists(private$spec_file))
     },
 
@@ -67,12 +69,15 @@ SpecOps = R6::R6Class(
   private = list(
     pkgname = NA,
     pkgobj = NA,
+    fedora = NA,
     spec_file = NA,
     spec_lines = NA,
     update = FALSE,
 
     set_name = function() {
-      private$pkgname <- stringr::str_interp("r_symbioinfo_${private$pkgobj$get_repo()}_${tolower(private$pkgobj$get_pkg_name())}")
+      private$pkgname <- stringr::str_interp(
+        # "r_symbioinfo_${private$pkgobj$get_repo()}_${tolower(private$pkgobj$get_pkg_name())}")
+        "r_${tolower(private$pkgobj$get_pkg_name())}")
       cli::cli_alert(stringr::str_interp("RPM name [${private$pkgname}]"))
     },
 

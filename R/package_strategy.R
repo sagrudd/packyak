@@ -27,30 +27,65 @@ PackageStrategy = R6::R6Class(
       }
     },
 
-    add_sys_reqs = function(items) {
-      clean_up_filters = c("C++11", "libbz2 & liblzma & libcurl")
-      if (any(clean_up_filters %in% items)) {
-        items <- items[-which(items %in% clean_up_filters)]
+    add_sys_reqs = function(name, items) {
+
+      skipped_methods = c("lubridate", "git2r")
+      if (name %in% skipped_methods) {
+        return()
       }
 
+      items <- gsub("\\s.*","", items)
+      items <- gsub(":.*", "", items)
+      items <- gsub("\\).*", "", items)
+      strip_vals = c("GNU", "Subversion", "Package", "optional")
+      items <- items[!items %in% strip_vals]
+
+      atomics <- c("xclip", "libxml2", "libgit2", "git", "libxml2-devel", "pandoc")
+      for (item in items[items %in% atomics]) {
+        self$register(item, item)
+      }
+      items <- items[!items %in% atomics]
+
+      corpus <- list(
+        "libcurl" = "libcurl-devel",
+        "GNU make" = "make",
+        "OpenSSL" = "openssl",
+        ICU4C = "icu"
+      )
+
       for (item in items) {
-        if (item == "GNU make")
-          self$register(item, "make")
-        else if (item == "libcurl")
-          self$register(item, "libcurl-devel")
-        else if (grepl("libxml2", item))
-          self$register(item, "libcurl-devel")
-        else if (item == "libpng")
-          self$register(item, "libpng-devel")
-        else if (item == "libjpeg")
-          self$register(item, "libjpeg-devel")
-        else if (item == "ICU4C")
-           self$register(item, "icu")
-        else {
-          cli::cli_alert_warning(stringr::str_interp("new sys_req [${item}]"))
-          # stop()
+        if (item %in% names(corpus)) {
+          self$register(item, as.character(corpus[item]))
+        } else {
+          silent_stop(stringr::str_interp("new [${name}] sys_req [\"${item}\"]"))
         }
       }
+
+      # clean_up_filters = c("C++11", "libbz2 & liblzma & libcurl")
+      # if (any(clean_up_filters %in% items)) {
+      #   items <- items[-which(items %in% clean_up_filters)]
+      # }
+
+      # for (item in items) {
+      #   if (item == "GNU make")
+      #     self$register(item, "make")
+      #   else if (item == "libcurl")
+      #     self$register(item, "libcurl-devel")
+      #   else if (grepl("libxml2", item))
+      #     self$register(item, "libcurl-devel")
+      #   else if (item == "libpng")
+      #     self$register(item, "libpng-devel")
+      #   else if (item == "libjpeg")
+      #     self$register(item, "libjpeg-devel")
+      #   else if (item == "ICU4C")
+      #      self$register(item, "icu")
+      #   else if (item == "xclip")
+      #     self$register(item, "xclip")
+      #   else {
+      #     silent_stop(stringr::str_interp("new sys_req [${item}]"))
+      #     # stop()
+      #   }
+      #}
 
     },
 

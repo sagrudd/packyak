@@ -9,11 +9,8 @@ Bioconductor = R6::R6Class(
   public = list(
 
     initialize = function(pkgname, htmlpage, strategy, url) {
-
       private$pkgname <- pkgname
       cli::cli_h1(stringr::str_interp("package [${self$get_pkg_name()}]"))
-
-
       private$repo_name <- "bioc"
       private$htmlpage <- htmlpage
       private$url <- url
@@ -42,7 +39,7 @@ Bioconductor = R6::R6Class(
       cli::cli_alert_info(stringr::str_interp("release    : ${self$get_release()}"))
 
       # extract source code link
-      private$source_code <- private$get_download_location("Source Package", private$page_tables[[4]])
+      private$source_code <- private$get_download_location("^Source Package", private$page_tables[[4]])
       cli::cli_alert_info(stringr::str_interp("source     : ${self$get_source()}"))
 
       # extract package dependencies
@@ -62,7 +59,7 @@ Bioconductor = R6::R6Class(
       # and check the system requirements
       cli::cli_h2(stringr::str_interp("[${self$get_pkg_name()}] system requirements"))
       private$sys_reqs <- private$referenced_package_filter("SystemRequirements", details_table)
-      private$strategy$add_sys_reqs(private$sys_reqs)
+      private$strategy$add_sys_reqs(self$get_pkg_name(), private$sys_reqs)
       print(private$sys_reqs)
     }
 

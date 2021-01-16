@@ -28,4 +28,5 @@ Imports:
     httr,
     rvest,
     lubridate,
-    git2r
+    git2r,
+    yaml

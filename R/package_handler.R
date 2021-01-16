@@ -53,13 +53,17 @@ PackageHandler = R6::R6Class(
       return(private$source_code)
     },
 
-    install_package = function(build_rpm, overwrite, fedora_release=NULL) {
-      private$assess_dependencies(overwrite=overwrite, build_rpm=build_rpm)
+    install_package = function(build_rpm, overwrite, fedora) {
+      private$assess_dependencies(overwrite=overwrite, build_rpm=build_rpm, fedora=fedora)
 
-      spec_o <- private$install_me(overwrite)
-
+      spec_o <- private$install_me(overwrite, fedora=fedora)
 
       if (build_rpm) {
+        fedora$spec2rpm(self, spec_o$get_spec_file())
+      }
+
+
+      if (build_rpm && 0 > 1) {
         cli::cli_alert_info(stringr::str_interp("Trying to build RPM package with [${spec_o$get_spec_file()}]"))
 
         # where will the RPM file be found?
@@ -105,23 +109,12 @@ PackageHandler = R6::R6Class(
           }
         }
 
-        # command1 <- stringr::str_interp("spectool -g -R ${private$spec_file}")
-        # print(command1)
-        # system(command1)
-        # system(stringr::str_interp("rpmbuild -ba ${private$spec_file}"))
-        # file <- tools::file_path_sans_ext(basename(private$spec_file))
-        # print(file)
-        # path <- Sys.glob(paste0("RPMS/aarch64/",file,"*"))
-        # print(path)
-        # system(stringr::str_interp("sudo yum install -y ${path}"))
-        # stop()
       }
     }
 
   ),
 
   private = list(
-
     pkgname = NA,
     repo_name = NA,
     htmlpage = NA,
@@ -155,6 +148,12 @@ PackageHandler = R6::R6Class(
       row_pointer <- which(grepl(lookup_key, download_table[,1]))
       download_filename <- download_table[row_pointer, 2]
       download_paths <- lookup_table %>% rvest::html_nodes("a") %>% rvest::html_attr("href")
+
+      if (length(download_filename) > 1) {
+        print(download_filename)
+        silent_stop("FUBAR")
+      }
+
       selected_path <- download_paths[grepl(download_filename, download_paths)]
       return(paste0(dirname(private$url), "/", selected_path))
     },
@@ -182,7 +181,7 @@ PackageHandler = R6::R6Class(
       return(NULL)
     },
 
-    assess_dependencies = function(overwrite, build_rpm) {
+    assess_dependencies = function(overwrite, build_rpm, fedora) {
       cli::cli_alert(
         stringr::str_interp("testing if package [${private$pkgname}] can be installed"))
 
@@ -193,18 +192,18 @@ PackageHandler = R6::R6Class(
           cli::cli_alert_info(stringr::str_interp("[${inst}] requirement [${private$pkgname}] is still pending"))
           # recurse into the problem ...
 
-          child <- PackYak$new(inst, strategy=private$strategy, overwrite=overwrite, build_rpm=build_rpm)
+          child <- PackYak$new(inst, strategy=private$strategy, overwrite=overwrite, build_rpm=build_rpm, fedora=fedora)
         }
       }
     },
 
 
-    install_me = function(overwrite) {
+    install_me = function(overwrite, fedora) {
       if (private$strategy$is_installed(private$pkgname)) {
         cli::cli_alert_info(stringr::str_interp("package [${private$pkgname}] has already been installed"))
       } else {
         cli::cli_alert_info(stringr::str_interp("installing package [${private$pkgname}]"))
-        so <- SpecOps$new(self, overwrite=overwrite)
+        so <- SpecOps$new(self, fedora=fedora, overwrite=overwrite)
         private$strategy$register(private$pkgname, so$get_rpm())
         return(so)
       }

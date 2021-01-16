@@ -1,0 +1,20 @@
+PackYak:
+  aarch:
+    - a
+    - b
+    - c
+  x86_64:
+    - devtools
+    - BiocManager
+    - testthat
+    - rmarkdown
+    - knitr
+    - cli
+    - stringr
+    - R6
+    - httr
+    - rvest
+    - lubridate
+    - git2r
+    - yaml
+    - affy

@@ -22,10 +22,6 @@ Cran = R6::R6Class(
       private$page_tables <- rvest::html_nodes(httr::content(htmlpage), "table")
 
       private$parse_page()
-
-      #if (private$is_installable()) {
-      #  private$install_package()
-      #}
     }
 
 
@@ -48,7 +44,7 @@ Cran = R6::R6Class(
 
       # extract source code link
       private$source_code <- private$get_download_location("Package", private$page_tables[[2]])
-      cli::cli_alert_info(stringr::str_interp("source     : ${self$get_source()}"))
+      cli::cli_alert_info(stringr::str_interp("^source     : ${self$get_source()}"))
 
 
       # extract package dependencies
@@ -68,7 +64,7 @@ Cran = R6::R6Class(
       # and check the system requirements
       cli::cli_h2(stringr::str_interp("[${self$get_pkg_name()}] system requirements"))
       private$sys_reqs <- private$referenced_package_filter("SystemRequirements:", details_table)
-      private$strategy$add_sys_reqs(private$sys_reqs)
+      private$strategy$add_sys_reqs(self$get_pkg_name(), private$sys_reqs)
       print(private$sys_reqs)
     }
 
