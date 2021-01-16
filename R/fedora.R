@@ -189,7 +189,7 @@ Fedora = R6::R6Class(
           topdirline <- lines[grepl("^%_topdir", lines)]
           # blunt regex here ... need complaints/criticisms...
           private$rpm_build_dir <-
-            gsub("%_topdir %(echo $HOME)/", "~/", topdirline)
+            gsub("%_topdir %\\(echo \\$HOME\\)/", "~/", topdirline)
         }
       }
 
