@@ -27,9 +27,17 @@ PackageStrategy = R6::R6Class(
       }
     },
 
+    is_defined = function() {
+      if (item %in% private$imports_list) {
+        return(TRUE)
+      }
+      return(FALSE)
+    },
+
+
     add_sys_reqs = function(name, items) {
 
-      skipped_methods = c("lubridate", "git2r")
+      skipped_methods = c("lubridate", "git2r", "unix", "microbenchmark")
       if (name %in% skipped_methods) {
         return()
       }
@@ -57,7 +65,10 @@ PackageStrategy = R6::R6Class(
         libbz2 = "bzip2-devel",
         libjpeg = "libjpeg-turbo",
         libsodium = "libsodium-devel",
-        libpq = "libpq-devel"
+        libpq = "libpq-devel",
+        cairo = "cairo-devel",
+        Poppler = "poppler-devel",
+        Pandoc = "pandoc"
       )
 
       for (item in items) {
@@ -67,32 +78,6 @@ PackageStrategy = R6::R6Class(
           silent_stop(stringr::str_interp("new [${name}] sys_req [\"${item}\"]"))
         }
       }
-
-      # clean_up_filters = c("C++11", "libbz2 & liblzma & libcurl")
-      # if (any(clean_up_filters %in% items)) {
-      #   items <- items[-which(items %in% clean_up_filters)]
-      # }
-
-      # for (item in items) {
-      #   if (item == "GNU make")
-      #     self$register(item, "make")
-      #   else if (item == "libcurl")
-      #     self$register(item, "libcurl-devel")
-      #   else if (grepl("libxml2", item))
-      #     self$register(item, "libcurl-devel")
-      #   else if (item == "libpng")
-      #     self$register(item, "libpng-devel")
-      #   else if (item == "libjpeg")
-      #     self$register(item, "libjpeg-devel")
-      #   else if (item == "ICU4C")
-      #      self$register(item, "icu")
-      #   else if (item == "xclip")
-      #     self$register(item, "xclip")
-      #   else {
-      #     silent_stop(stringr::str_interp("new sys_req [${item}]"))
-      #     # stop()
-      #   }
-      #}
 
     },
 

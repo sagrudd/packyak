@@ -4,7 +4,22 @@ PackYak = R6::R6Class(
   "PackYak",
   public = list(
 
-    initialize = function(pkgname="rpm_targets.yaml", strategy=NULL, build_rpm=FALSE, overwrite=FALSE, fedora=NULL) {
+    initialize = function(
+      pkgname="rpm_targets.yaml",
+      strategy=NULL,
+      build_rpm=FALSE,
+      overwrite=FALSE,
+      follow_suggests=FALSE,
+      fedora=NULL) {
+
+      #system_installed = c()
+
+      #if (pkgname %in% system_installed) return()
+      if (pkgname == "rpm_targets.yaml" && !file.exists("rpm_targets")) {
+        pkgname <- system.file("extdata/rpm_targets.yaml", package="packyak")
+      }
+
+
       cli::cli_alert(
         stringr::str_interp(
           "creating RPM file from package [{pkgname}]"))
@@ -26,7 +41,10 @@ PackYak = R6::R6Class(
       if (is.character(pkgname) && length(pkgname) > 1) {
         cli::cli_alert_info("processing a vector of entries ...")
         for (p in pkgname) {
-          child <- PackYak$new(p, strategy=private$strategy, build_rpm=build_rpm, overwrite=overwrite, fedora=fedora)
+          child <- PackYak$new(
+            p, strategy=private$strategy, build_rpm=build_rpm,
+            overwrite=overwrite, follow_suggests=follow_suggests,
+            fedora=fedora)
         }
       } else {
         # single entity ... is it a file?
@@ -38,11 +56,16 @@ PackYak = R6::R6Class(
             if (fedora$get_architecture() %in% names(root)) {
               targets <- root[[fedora$get_architecture()]]
               for (target in targets) {
-                child <- PackYak$new(target, strategy=private$strategy, build_rpm=build_rpm, overwrite=overwrite, fedora=fedora)
+                child <- PackYak$new(
+                  target, strategy=private$strategy, build_rpm=build_rpm,
+                  overwrite=overwrite, follow_suggests=follow_suggests,
+                  fedora=fedora)
 
               }
             } else {
-              silent_stop(stringr::str_interp("YAML does not contain [${fedora$get_architecture()}] arch element"))
+              silent_stop(
+                stringr::str_interp(
+                  "YAML does not contain [${fedora$get_architecture()}] arch element"))
             }
           } else {
             silent_stop("YAML does not contain PackYak root element")
@@ -57,6 +80,8 @@ PackYak = R6::R6Class(
             cli::cli_alert_success("successfully loaded a Bioconductor page")
           } else if (self$is_bioconductor_annotation()) {
             cli::cli_alert_success("successfully loaded a Bioconductor annotation page")
+          } else if (self$is_bioconductor_experiment()) {
+            cli::cli_alert_success("successfully loaded a Bioconductor experiment page")
           } else {
             silent_stop("This package cannot be found at BioC or CRAN")
           }
@@ -64,7 +89,13 @@ PackYak = R6::R6Class(
           if (!is.null(private$package_page)) {
             cli::cli_alert_success("Proto-package object created")
             private$package_page$install_package(
-              build_rpm=build_rpm, overwrite=overwrite, fedora=fedora)
+              build_rpm=build_rpm, overwrite=overwrite, fedora=fedora,
+              follow_suggests=follow_suggests)
+            if (follow_suggests) {
+              private$package_page$install_suggestions(
+                build_rpm=build_rpm, overwrite=overwrite, fedora=fedora,
+                follow_suggests=follow_suggests)
+            }
           }
         }
       }
@@ -112,7 +143,23 @@ PackYak = R6::R6Class(
         return(TRUE)
       }
       return(FALSE)
+    },
+
+    is_bioconductor_experiment = function() {
+      bioc <- stringr::str_interp(
+        "https://bioconductor.org/packages/release/data/experiment/html/${private$package_name}.html"
+      )
+      cli::cli_alert(stringr::str_interp("checking bioc - experiment - [{bioc}]"))
+      lookup <- httr::GET(bioc)
+      if (lookup$status_code == 200) {
+        private$package_page <- Bioconductor$new(
+          pkgname=private$package_name, htmlpage=lookup,
+          strategy=private$strategy, url=bioc)
+        return(TRUE)
+      }
+      return(FALSE)
     }
+
 
 
   ),

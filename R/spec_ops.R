@@ -195,8 +195,11 @@ SpecOps = R6::R6Class(
 
 
       sys_reqs <- private$pkgobj$get_sys_reqs()
-      if(!is.null(sys_reqs)) {
+      #print(sys_reqs)
+
+      if (!is.null(sys_reqs)) {
         cli::cli_alert(stringr::str_interp("linking sys_reqs [${paste(sys_reqs)}]"))
+        #silent_stop("testing")
         for (dep in sys_reqs) {
           feature <- private$pkgobj$get_package_id(dep)
           if (!is.null(feature) && !feature=="NULL") {

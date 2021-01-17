@@ -53,8 +53,10 @@ PackageHandler = R6::R6Class(
       return(private$source_code)
     },
 
-    install_package = function(build_rpm, overwrite, fedora) {
-      private$assess_dependencies(overwrite=overwrite, build_rpm=build_rpm, fedora=fedora)
+    install_package = function(build_rpm, overwrite, fedora, follow_suggests) {
+      private$assess_dependencies(
+        overwrite=overwrite, build_rpm=build_rpm,
+        fedora=fedora, follow_suggests=follow_suggests)
 
       spec_o <- private$install_me(overwrite, fedora=fedora)
 
@@ -63,6 +65,12 @@ PackageHandler = R6::R6Class(
       if (build_rpm && !is.null(spec_o)) {
         fedora$spec2rpm(self, spec_o$get_spec_file())
       }
+    },
+
+    install_suggestions = function(build_rpm, overwrite, fedora, follow_suggests) {
+      private$assess_packages(
+        private$novels, overwrite=overwrite, build_rpm=build_rpm,
+        fedora=fedora, follow_suggests=follow_suggests)
     }
 
   ),
@@ -84,7 +92,8 @@ PackageHandler = R6::R6Class(
     clean_up_filters = c(
       "methods", "R", "Matrix", "mgcv", "nlme", "MASS", "utils",
       "splines", "lattice", "datasets", "grid", "stats", "tools",
-      "grDevices", "parallel", "graphics", "tcltk", "stats4"),
+      "grDevices", "parallel", "graphics", "tcltk", "stats4", "rpart",
+      "codetools", "nnet"),
 
 
     get_value_from_table = function(key, table) {
@@ -134,18 +143,26 @@ PackageHandler = R6::R6Class(
       return(NULL)
     },
 
-    assess_dependencies = function(overwrite, build_rpm, fedora) {
+    assess_dependencies = function(overwrite, build_rpm, fedora, follow_suggests) {
       cli::cli_alert(
         stringr::str_interp("testing if package [${private$pkgname}] can be installed"))
 
-      for (inst in private$depends) {
+      private$assess_packages(
+        private$depends, overwrite=overwrite, build_rpm=build_rpm,
+        fedora=fedora, follow_suggests=follow_suggests)
+    },
+
+    assess_packages = function(packages_to_assess, overwrite, build_rpm, fedora, follow_suggests) {
+      for (inst in packages_to_assess) {
         if (private$strategy$is_installed(inst)) {
           cli::cli_alert_info(stringr::str_interp("[${inst}] required by [${private$pkgname}] has already been installed"))
         } else {
           cli::cli_alert_info(stringr::str_interp("[${inst}] requirement [${private$pkgname}] is still pending"))
           # recurse into the problem ...
 
-          child <- PackYak$new(inst, strategy=private$strategy, overwrite=overwrite, build_rpm=build_rpm, fedora=fedora)
+          child <- PackYak$new(
+            inst, strategy=private$strategy, overwrite=overwrite,
+            build_rpm=build_rpm, fedora=fedora, follow_suggests=follow_suggests)
         }
       }
     },
