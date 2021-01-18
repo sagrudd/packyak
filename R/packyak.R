@@ -74,10 +74,10 @@ PackYak = R6::R6Class(
           silent_stop("END")
         } else {
 
-          if (self$is_cran_resource()) {
-            cli::cli_alert_success("successfully loaded a CRAN page")
-          } else if (self$is_bioconductor_resource()) {
+          if (self$is_bioconductor_resource()) {
             cli::cli_alert_success("successfully loaded a Bioconductor page")
+          } else if (self$is_cran_resource()) {
+            cli::cli_alert_success("successfully loaded a CRAN page")
           } else if (self$is_bioconductor_annotation()) {
             cli::cli_alert_success("successfully loaded a Bioconductor annotation page")
           } else if (self$is_bioconductor_experiment()) {

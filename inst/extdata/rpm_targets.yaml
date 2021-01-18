@@ -8,6 +8,7 @@ PackYak:
     - dbplyr
     - devtools
     - dplyr
+    - edgeR
     - emojifont
     - ggplot2
     - git2r
@@ -24,6 +25,7 @@ PackYak:
     - Rcpp
     - readr
     - reshape2
+    - rhdf5
     - rlang
     - rmarkdown
     - RPostgres
@@ -44,6 +46,7 @@ PackYak:
     - dbplyr
     - devtools
     - dplyr
+    - edgeR
     - emojifont
     - ggplot2
     - git2r
