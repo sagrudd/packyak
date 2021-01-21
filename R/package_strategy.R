@@ -45,10 +45,10 @@ PackageStrategy = R6::R6Class(
       items <- gsub("\\s.*","", items)
       items <- gsub(":.*", "", items)
       items <- gsub("\\).*", "", items)
-      strip_vals = c("GNU", "Subversion", "Package", "optional", "C++11", "Optional")
+      strip_vals = c("GNU", "Subversion", "Package", "optional", "C++11", "Optional", "PhantomJS")
       items <- items[!items %in% strip_vals]
 
-      atomics <- c("xclip", "libxml2", "libgit2", "git", "libxml2-devel", "pandoc", "libsecret-devel")
+      atomics <- c("xclip", "libxml2", "libgit2", "git", "libxml2-devel", "pandoc", "libsecret-devel", "ImageMagick")
       for (item in items[items %in% atomics]) {
         self$register(item, item)
       }

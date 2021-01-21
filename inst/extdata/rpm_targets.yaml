@@ -11,14 +11,17 @@ PackYak:
     - edgeR
     - emojifont
     - ggplot2
+    - ggsci
     - git2r
     - httr
+    - kableExtra
     - keyring
     - knitr
     - lubridate
     - magrittr
     - openssl
     - optparse
+    - plumber
     - purrr
     - R6
     - RColorBrewer
@@ -36,6 +39,7 @@ PackYak:
     - testthat
     - tibble
     - tidyr
+    - urltools
     - yaml
   x86_64:
     - affy
@@ -49,14 +53,17 @@ PackYak:
     - edgeR
     - emojifont
     - ggplot2
+    - ggsci
     - git2r
     - httr
+    - kableExtra
     - keyring
     - knitr
     - lubridate
     - magrittr
     - openssl
     - optparse
+    - plumber
     - purrr
     - R6
     - RColorBrewer
@@ -74,5 +81,6 @@ PackYak:
     - testthat
     - tibble
     - tidyr
+    - urltools
     - yaml
 
