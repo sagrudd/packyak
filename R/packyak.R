@@ -78,7 +78,7 @@ PackYak = R6::R6Class(
             cli::cli_alert_success("successfully loaded a Bioconductor page")
           } else if (self$is_cran_resource()) {
             cli::cli_alert_success("successfully loaded a CRAN page")
-          } else if (self$is_pypi_resource()) {
+          } else if (self$is_pypi_resource(fedora)) {
             cli::cli_alert_success("successfully loaded a PyPi page")
           } else if (self$is_bioconductor_annotation()) {
             cli::cli_alert_success("successfully loaded a Bioconductor annotation page")
@@ -132,7 +132,7 @@ PackYak = R6::R6Class(
       return(FALSE)
     },
 
-    is_pypi_resource = function() {
+    is_pypi_resource = function(fedora) {
       pypi <- stringr::str_interp(
         "https://pypi.org/project/${private$package_name}/")
       cli::cli_alert(stringr::str_interp("checking PyPi [{pypi}]"))
@@ -140,7 +140,7 @@ PackYak = R6::R6Class(
       if (lookup$status_code == 200) {
         private$package_page <- PyPi$new(
           pkgname=private$package_name, htmlpage=lookup,
-          strategy=private$strategy, url=pypi)
+          strategy=private$strategy, url=pypi, fedora=fedora)
         return(TRUE)
       }
       return(FALSE)

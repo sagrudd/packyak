@@ -30,6 +30,10 @@ Fedora = R6::R6Class(
       return(private$rpm_build_dir)
     },
 
+    get_rpmsource_dir = function() {
+      return(file.path(self$get_rpmbuild_dir(), "SOURCES"))
+    },
+
     spec2rpm = function(package, specfile) {
       cli::cli_h2(stringr::str_interp("building RPM package from [${specfile}]"))
 

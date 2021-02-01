@@ -30,4 +30,5 @@ Imports:
     lubridate,
     git2r,
     yaml,
-    tibble
+    tibble,
+    curl

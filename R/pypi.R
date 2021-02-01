@@ -8,7 +8,7 @@ PyPi = R6::R6Class(
   inherit = PackageHandler,
   public = list(
 
-    initialize = function(pkgname, htmlpage, strategy, url) {
+    initialize = function(pkgname, htmlpage, strategy, url, fedora) {
       private$pkgname <- pkgname
       cli::cli_h1(stringr::str_interp("package [${self$get_pkg_name()}]"))
       private$repo_name <- "pypi"
@@ -18,7 +18,7 @@ PyPi = R6::R6Class(
       private$page_tables <- rvest::html_nodes(
         httr::content(htmlpage, encoding="UTF-8"), "table")
 
-      private$parse_page()
+      private$parse_page(fedora)
 
       silent_stop("dev_stop")
     }
@@ -26,9 +26,26 @@ PyPi = R6::R6Class(
 
   private = list(
 
-    parse_page = function() {
+    parse_page = function(fedora) {
 
-      print(private$page_tables[[1]])
+      links = private$page_tables[[1]] %>% rvest::html_nodes("a") %>% rvest::html_attr("href")
+
+      httplinks <- stringr::str_which(links, "^https.*tar.gz")
+      links <- links[httplinks]
+      link <- links[length(links)]
+
+      print(link)
+
+      tarball <- file.path(fedora$get_rpmsource_dir(), basename(link))
+
+      # has the file already been downloading
+      cli::cli_alert(stringr::str_interp("looking for cached PyPi tarball [${tarball}]"))
+      if (!file.exists(tarball)) {
+        cli::cli_alert_info("downloading file to SOURCE directory")
+        curl::curl_download(link, tarball)
+      } else {
+        cli::cli_alert_info("tarball already available in SOURCE directory")
+      }
 
       silent_stop("dev_stop")
 
