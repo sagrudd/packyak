@@ -42,7 +42,6 @@ PackYak:
     - urltools
     - yaml
   x86_64:
-    - Cython
     - affy
     - aws.s3
     - BiocManager
