@@ -75,9 +75,14 @@ SpecOps = R6::R6Class(
     update = FALSE,
 
     set_name = function() {
+
+      prefix = "r_"
+      if (private$pkgobj$language == "Python") {
+        prefix = "py_"
+      }
+
       private$pkgname <- stringr::str_interp(
-        # "r_symbioinfo_${private$pkgobj$get_repo()}_${tolower(private$pkgobj$get_pkg_name())}")
-        "r_${tolower(private$pkgobj$get_pkg_name())}")
+        "${prefix}${tolower(private$pkgobj$get_pkg_name())}")
       cli::cli_alert(stringr::str_interp("RPM name [${private$pkgname}]"))
     },
 
@@ -94,10 +99,17 @@ SpecOps = R6::R6Class(
 
     create_spec_from_template = function(comments=NULL) {
       template <- file.path(system.file(package="packyak"), "extdata", "r-template.spec")
+      if (private$pkgobj$language == "Python") {
+        template <- file.path(system.file(package="packyak"), "extdata", "py-template.spec")
+      }
+
       private$spec_lines <- readLines(template)
 
       private$set_packname_variable()
-      private$check_r_version()
+
+      if (private$pkgobj$language == "R") {
+        private$check_r_version()
+      }
       private$set_package_versions()
       private$update_source()
       private$update_license()
@@ -167,7 +179,7 @@ SpecOps = R6::R6Class(
       private$spec_lines[which(grepl("^URL:", private$spec_lines))] <-
         stringr::str_interp("URL:              ${private$pkgobj$get_url()}")
 
-      summary <- stringr::str_interp("PackYak v${packageVersion(\"packyak\")} build of R-package [${private$pkgobj$get_pkg_name()}] version [${private$pkgobj$get_version_str()}]")
+      summary <- stringr::str_interp("PackYak v${packageVersion(\"packyak\")} build of ${private$pkgobj$language} package [${private$pkgobj$get_pkg_name()}] version [${private$pkgobj$get_version_str()}]")
       private$spec_lines[which(grepl("^Summary:", private$spec_lines))] <-
         stringr::str_interp("Summary:          ${summary}")
 
@@ -182,8 +194,12 @@ SpecOps = R6::R6Class(
 
 
     update_dependencies = function() {
-      build_requires = "tex(latex) R-core = %{rversion}"
-      requires = "tex(latex) R-core = %{rversion}"
+      build_requires <- "tex(latex) R-core = %{rversion}"
+      requires <- "tex(latex) R-core = %{rversion}"
+      if (private$pkgobj$language == "Python") {
+        build_requires <- "python-devel"
+        requires <- "python-devel"
+      }
       dependencies <- private$pkgobj$get_depends()
       if(!is.null(dependencies)) {
         cli::cli_alert(stringr::str_interp("linking dependencies [${paste(dependencies)}]"))

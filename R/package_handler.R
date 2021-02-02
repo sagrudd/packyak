@@ -75,7 +75,17 @@ PackageHandler = R6::R6Class(
 
   ),
 
+  active = list(
+    language = function(set=NULL) {
+      if (!is.null(set)) {
+        private$packlanguage <- set
+      }
+      return(private$packlanguage)
+    }
+  ),
+
   private = list(
+    packlanguage = "R",
     pkgname = NA,
     repo_name = NA,
     htmlpage = NA,
