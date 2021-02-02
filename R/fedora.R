@@ -106,6 +106,7 @@ Fedora = R6::R6Class(
       rpm_build = FALSE,
       rpm_build_dir = NULL,
       installed_packages = NULL,
+      prior_art = NULL,
 
       sanity_check = function() {
 
@@ -152,6 +153,21 @@ Fedora = R6::R6Class(
               byrow=TRUE, dimnames=list(NULL, c("V1", "V2", "V3"))))
 
         print(private$installed_packages)
+
+        private$prior_art <-
+          tibble::as_tibble(
+            matrix(
+              unlist(
+                unlist(
+                  lapply(
+                    stringr::str_trim(
+                      system("dnf list all", intern=TRUE)[-1]),
+                    strsplit, "\\s+"))),
+              ncol=3,
+              byrow=TRUE, dimnames=list(NULL, c("V1", "V2", "V3"))))
+
+
+
 
         private$check_rpm_build()
         cli::cli_alert_info(

@@ -78,7 +78,7 @@ SpecOps = R6::R6Class(
 
       prefix = "r_"
       if (private$pkgobj$language == "Python") {
-        prefix = "py_"
+        prefix = "python3_"
       }
 
       private$pkgname <- stringr::str_interp(

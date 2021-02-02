@@ -179,6 +179,13 @@ PackageHandler = R6::R6Class(
 
 
     install_me = function(overwrite, fedora) {
+
+      # first step - check for prior art ...
+      cli::cli_h1("Checking for prior art ...")
+
+
+      silent_stop("fin.")
+
       if (private$strategy$is_installed(private$pkgname)) {
         cli::cli_alert_info(stringr::str_interp("package [${private$pkgname}] has already been installed"))
         return(NULL)

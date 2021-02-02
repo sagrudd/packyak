@@ -15,8 +15,6 @@ Summary:          Automated Build of package = zoo (1.8.8)
 BuildRequires:    python-devel
 Requires:         python-devel
 
-%define python3_sitelib /usr/lib64/python3.9/site-packages/
-%define __python /usr/bin/python3
 %description
 
 %prep
@@ -24,11 +22,27 @@ Requires:         python-devel
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 
 %build
-%{__python} setup.py build
+%{__python3} setup.py build
 
 %install
-%{__python} setup.py install --root=%{buildroot} --record=FILELIST
-pathfix.py -pni "%{__python3} %{py3_shbang_opts}" %{buildroot}%{python3_sitearch} %{buildroot}%{_bindir}/*
+INSTALLED_FILES=$RPM_BUILD_ROOT/ExtraFiles.list
+%{__python3} setup.py install --root=%{buildroot} --record=%{INSTALLED_FILES}
+
+# attempt the pathfix using conditional if the binary directory has been created
+if ([ -d %{buildroot}%{_bindir} ]); then
+    pathfix.py -pni "%{__python3} %{py3_shbang_opts}" %{buildroot}%{python3_sitearch} %{buildroot}%{_bindir}/*
+fi
+
+echo "checking for presence of /usr/lib"
+if ([ -d %{buildroot}/usr/lib/ ]); then
+  echo "/usr/lib/python3.9/site-packages/"
+  %define libhome "/usr/lib/python3.9/site-packages/"
+fi
+if ([ -d %{buildroot}/usr/lib64/ ]); then
+  echo "/usr/lib64/python3.9/site-packages/"
+  %define libhome "/usr/lib/python3.9/site-packages/"
+fi
+echo %{libhome}
 
 %check
 
@@ -36,9 +50,8 @@ pathfix.py -pni "%{__python3} %{py3_shbang_opts}" %{buildroot}%{python3_sitearch
 rm -rf $RPM_BUILD_ROOT
 rm -fR %{_builddir}/%{packname}*
 
-%files
-%{python3_sitelib}/*
-%{_bindir}/*
+%files -f %{INSTALLED_FILES}
+%{libhome}
 
 %changelog
 * Mon Feb 1 2021 sagrudd <stephen@mnemosyne.co.uk>
