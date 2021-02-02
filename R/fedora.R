@@ -93,6 +93,27 @@ Fedora = R6::R6Class(
       }
 
       #silent_stop("development stop")
+    },
+
+
+    check_prior_art = function(pkgname) {
+
+      cli::cli_alert_info(stringr::str_interp("looking for package [${pkgname}]"))
+      keys <- which(stringr::str_detect(private$prior_art$V1, pkgname))
+      if (length(keys)==0) {
+        return(NULL)
+      } else {
+        response <- private$prior_art[keys,]
+        print(response)
+        return(response)
+      }
+
+    },
+
+
+    package_sync = function(external_package) {
+      system(stringr::str_interp("sudo yum -y install ${external_package}"))
+      system(stringr::str_interp("sudo yum -y update ${external_package}"))
     }
 
 
@@ -154,19 +175,14 @@ Fedora = R6::R6Class(
 
         print(private$installed_packages)
 
+        lines <- system("dnf list all", intern=TRUE)[-c(1)]
+        lines <- lines[!lines %in% c("Available Packages", "Installed Packages")]
+        items <- lines %>%
+          stringr::str_split("\\s+", n=3) %>%
+          purrr::flatten() %>%
+          stringr::str_trim()
         private$prior_art <-
-          tibble::as_tibble(
-            matrix(
-              unlist(
-                unlist(
-                  lapply(
-                    stringr::str_trim(
-                      system("dnf list all", intern=TRUE)[-1]),
-                    strsplit, "\\s+"))),
-              ncol=3,
-              byrow=TRUE, dimnames=list(NULL, c("V1", "V2", "V3"))))
-
-
+          tibble::as_tibble(matrix(items, ncol=3, byrow=TRUE, dimnames=list(NULL, c("V1", "V2", "V3"))))
 
 
         private$check_rpm_build()

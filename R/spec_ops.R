@@ -75,14 +75,7 @@ SpecOps = R6::R6Class(
     update = FALSE,
 
     set_name = function() {
-
-      prefix = "r_"
-      if (private$pkgobj$language == "Python") {
-        prefix = "python3_"
-      }
-
-      private$pkgname <- stringr::str_interp(
-        "${prefix}${tolower(private$pkgobj$get_pkg_name())}")
+      private$pkgname <- private$pkgobj$canonical_name
       cli::cli_alert(stringr::str_interp("RPM name [${private$pkgname}]"))
     },
 
@@ -113,6 +106,7 @@ SpecOps = R6::R6Class(
       private$set_package_versions()
       private$update_source()
       private$update_license()
+      private$update_architecture()
       private$update_dependencies()
 
       if (!is.null(comments)) {
@@ -190,6 +184,17 @@ SpecOps = R6::R6Class(
       license <- private$pkgobj$get_license()
       private$spec_lines[which(grepl("^License", private$spec_lines))] <-
         stringr::str_interp("License:          ${license}")
+    },
+
+
+    update_architecture = function() {
+      if (private$pkgobj$is_noarch()) {
+        index <- which(grepl("^License", private$spec_lines))
+        ammendment <- paste0(
+          "BuildArch:        noarch\n",
+          private$spec_lines[index])
+        private$spec_lines[index] <- ammendment
+      }
     },
 
 

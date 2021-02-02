@@ -28,6 +28,10 @@ PackageHandler = R6::R6Class(
     },
 
     get_release = function() {
+      if (!is.null(private$release)) {
+        return(private$release)
+      }
+
       unp <- unlist(strsplit(private$version_str, "-"))
       if (length(unp)==1) {
         return(1)
@@ -54,6 +58,12 @@ PackageHandler = R6::R6Class(
     },
 
     install_package = function(build_rpm, overwrite, fedora, follow_suggests) {
+      if (self$prior_art(fedora)) { # publicly available ...
+        private$strategy$register(private$pkgname, self$canonical_name)
+        # and ensure that the package is actually installed
+        fedora$package_sync(self$canonical_name)
+      }
+
       private$assess_dependencies(
         overwrite=overwrite, build_rpm=build_rpm,
         fedora=fedora, follow_suggests=follow_suggests)
@@ -71,6 +81,44 @@ PackageHandler = R6::R6Class(
       private$assess_packages(
         private$novels, overwrite=overwrite, build_rpm=build_rpm,
         fedora=fedora, follow_suggests=follow_suggests)
+    },
+
+    prior_art = function(fedora) {
+      # first step - check for prior art ...
+      cli::cli_h1(stringr::str_interp("Checking for prior art [${private$pkgname}]..."))
+
+      prior_art <- fedora$check_prior_art(self$canonical_name)
+      if (!is.null(prior_art)) {
+        if (nrow(prior_art) > 1) {
+          silent_stop("prior art ambiguity - please resolve code")
+        }
+
+        build_arch <- as.character(prior_art[1,1]) %>% stringr::str_extract("(?<=\\.).*")
+        if (build_arch == "noarch") {
+          private$noarch <- TRUE
+        }
+        version <- as.character(prior_art[1,2]) %>% stringr::str_extract("^[^-]*")
+        patch <- as.character(prior_art[1,2]) %>% stringr::str_extract("(?<=-)[^\\.]*")
+        private$release <- as.integer(patch) + 1
+
+        cli::cli_alert_info(stringr::str_interp("buildarch : [${build_arch}]"))
+        cli::cli_alert_info(stringr::str_interp("version   : [${version}]"))
+        cli::cli_alert_info(stringr::str_interp("patch     : [${patch}]"))
+
+        cli::cli_alert_info(stringr::str_interp("defined - package == ${self$get_version()}"))
+
+        deltaversion <- utils::compareVersion(version, self$get_version())
+        if (deltaversion >= 0) { # -1 when b is later than a
+          cli::cli_alert_success("Prior art *has* been established")
+          return(TRUE)
+        }
+      }
+      cli::cli_alert_success("Prior art has not been established")
+      return(FALSE)
+    },
+
+    is_noarch = function() {
+      return(private$noarch)
     }
 
   ),
@@ -81,6 +129,16 @@ PackageHandler = R6::R6Class(
         private$packlanguage <- set
       }
       return(private$packlanguage)
+    },
+
+    canonical_name = function(set) {
+      if (self$language=="Python") {
+        return(paste0("python3-", private$pkgname))
+      } else if (self$language=="R") {
+        return(paste0("r_", private$pkgname))
+      } else {
+        silent_stop("Not an expected language")
+      }
     }
   ),
 
@@ -99,6 +157,8 @@ PackageHandler = R6::R6Class(
     novels = NULL,
     depends = NULL,
     source_code = NA,
+    noarch = FALSE,
+    release = NULL,
     clean_up_filters = c(
       "methods", "R", "Matrix", "mgcv", "nlme", "MASS", "utils",
       "splines", "lattice", "datasets", "grid", "stats", "tools",
@@ -179,12 +239,6 @@ PackageHandler = R6::R6Class(
 
 
     install_me = function(overwrite, fedora) {
-
-      # first step - check for prior art ...
-      cli::cli_h1("Checking for prior art ...")
-
-
-      silent_stop("fin.")
 
       if (private$strategy$is_installed(private$pkgname)) {
         cli::cli_alert_info(stringr::str_interp("package [${private$pkgname}] has already been installed"))

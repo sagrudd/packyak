@@ -70,7 +70,9 @@ PyPi = R6::R6Class(
         cli::cli_alert_info("tarball already available in SOURCE directory")
       }
 
-      ## creatively parse dependencies from this setup.py
+      # extract source code link
+      private$source_code <- link
+      cli::cli_alert_info(stringr::str_interp("source     : ${self$get_source()}"))
 
       # extract license
       private$license <- httr::content(private$htmlpage, "text") %>%
@@ -88,9 +90,15 @@ PyPi = R6::R6Class(
       cli::cli_alert_info(stringr::str_interp("version    : ${self$get_version()}"))
       cli::cli_alert_info(stringr::str_interp("release    : ${self$get_release()}"))
 
-      # extract source code link
-      private$source_code <- link
-      cli::cli_alert_info(stringr::str_interp("source     : ${self$get_source()}"))
+
+      ######
+      # Let's have a quick check to see if this package is worth pursuing as
+      # novel or if it already existing prior art ...
+      if (self$prior_art(fedora)) {
+        return()
+      }
+
+
 
       # extract package dependencies
       command = stringr::str_interp("~/.local/bin/johnnydep --output-format pinned ${private$pkgname}")
