@@ -40,7 +40,7 @@ if ([ -d %{buildroot}/usr/lib/ ]); then
 fi
 if ([ -d %{buildroot}/usr/lib64/ ]); then
   echo "/usr/lib64/python3.9/site-packages/"
-  %define libhome "/usr/lib/python3.9/site-packages/"
+  %define libhome "/usr/lib64/python3.9/site-packages/"
 fi
 echo %{libhome}
 

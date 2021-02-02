@@ -98,8 +98,9 @@ PackageHandler = R6::R6Class(
           private$noarch <- TRUE
         }
         version <- as.character(prior_art[1,2]) %>% stringr::str_extract("^[^-]*")
+        version <- stringr::str_replace(version, "1:", "") # may be a fix for e.g. numpy ...
+
         patch <- as.character(prior_art[1,2]) %>% stringr::str_extract("(?<=-)[^\\.]*")
-        private$release <- as.integer(patch) + 1
 
         cli::cli_alert_info(stringr::str_interp("buildarch : [${build_arch}]"))
         cli::cli_alert_info(stringr::str_interp("version   : [${version}]"))
@@ -109,6 +110,7 @@ PackageHandler = R6::R6Class(
 
         deltaversion <- utils::compareVersion(version, self$get_version())
         if (deltaversion >= 0) { # -1 when b is later than a
+          private$release <- as.integer(patch) + 1
           cli::cli_alert_success("Prior art *has* been established")
           return(TRUE)
         }

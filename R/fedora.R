@@ -99,7 +99,10 @@ Fedora = R6::R6Class(
     check_prior_art = function(pkgname) {
 
       cli::cli_alert_info(stringr::str_interp("looking for package [${pkgname}]"))
-      keys <- which(stringr::str_detect(private$prior_art$V1, pkgname))
+
+      lookup_key <- paste0("^", pkgname, ".(noarch|", self$get_architecture(),")")
+
+      keys <- which(stringr::str_detect(private$prior_art$V1, lookup_key))
       if (length(keys)==0) {
         return(NULL)
       } else {
@@ -183,6 +186,10 @@ Fedora = R6::R6Class(
           stringr::str_trim()
         private$prior_art <-
           tibble::as_tibble(matrix(items, ncol=3, byrow=TRUE, dimnames=list(NULL, c("V1", "V2", "V3"))))
+        # and strip out the locally installed resources - they complicate ...
+        private$prior_art <-
+          private$prior_art[
+            which(!stringr::str_detect(private$prior_art$V3, "commandline")),]
 
 
         private$check_rpm_build()
