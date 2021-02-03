@@ -28,19 +28,21 @@ PyPi = R6::R6Class(
 
   private = list(
 
-    parse_page = function(fedora) {
-      mytable <- private$page_tables[[1]]
-      attrs <- rvest::html_attrs(mytable)
-      if ("table table--downloads" %in% attrs) {
-        print("tagged")
-      } else {
-        mytable <- private$page_tables[[2]]
+
+    pick_table = function() {
+      for (i in seq(10)) {
+        mytable <- private$page_tables[[i]]
         attrs <- rvest::html_attrs(mytable)
-        if (!"table table--downloads" %in% attrs) {
-          silent_stop("unable to pick table ...")
+        if ("table table--downloads" %in% attrs) {
+          cli::cli_alert(stringr::str_interp("picked tagged table [[${i}]"))
+          return(mytable)
         }
       }
+      silent_stop("missing table ???")
+    },
 
+    parse_page = function(fedora) {
+      mytable <- private$pick_table()
 
       links = mytable %>% rvest::html_nodes("a") %>% rvest::html_attr("href")
 

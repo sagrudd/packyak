@@ -10,7 +10,8 @@ PackYak = R6::R6Class(
       build_rpm=FALSE,
       overwrite=FALSE,
       follow_suggests=FALSE,
-      fedora=NULL) {
+      fedora=NULL,
+      context=NULL) {
 
       #system_installed = c()
 
@@ -74,18 +75,28 @@ PackYak = R6::R6Class(
           silent_stop("END")
         } else {
 
-          if (self$is_bioconductor_resource()) {
-            cli::cli_alert_success("successfully loaded a Bioconductor page")
-          } else if (self$is_cran_resource()) {
-            cli::cli_alert_success("successfully loaded a CRAN page")
-          } else if (self$is_pypi_resource(fedora)) {
-            cli::cli_alert_success("successfully loaded a PyPi page")
-          } else if (self$is_bioconductor_annotation()) {
-            cli::cli_alert_success("successfully loaded a Bioconductor annotation page")
-          } else if (self$is_bioconductor_experiment()) {
-            cli::cli_alert_success("successfully loaded a Bioconductor experiment page")
+          if (!is.null(context) && context == "Python") {
+            if (self$is_pypi_resource(fedora)) {
+              cli::cli_alert_success("successfully loaded a PyPi page")
+            } else {
+              silent_stop("This package cannot be found within Python context")
+            }
           } else {
-            silent_stop("This package cannot be found at BioC or CRAN")
+
+            if (self$is_bioconductor_resource()) {
+              cli::cli_alert_success("successfully loaded a Bioconductor page")
+            } else if (self$is_cran_resource()) {
+              cli::cli_alert_success("successfully loaded a CRAN page")
+            } else if (self$is_pypi_resource(fedora)) {
+              cli::cli_alert_success("successfully loaded a PyPi page")
+            } else if (self$is_bioconductor_annotation()) {
+              cli::cli_alert_success("successfully loaded a Bioconductor annotation page")
+            } else if (self$is_bioconductor_experiment()) {
+              cli::cli_alert_success("successfully loaded a Bioconductor experiment page")
+            } else {
+              silent_stop("This package cannot be found at BioC or CRAN")
+            }
+
           }
 
           if (!is.null(private$package_page)) {

@@ -22,27 +22,13 @@ Requires:         python-devel
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 
 %build
-%{__python3} setup.py build
+%py3_build
 
 %install
-INSTALLED_FILES=$RPM_BUILD_ROOT/ExtraFiles.list
-%{__python3} setup.py install --root=%{buildroot} --record=%{INSTALLED_FILES}
-
-# attempt the pathfix using conditional if the binary directory has been created
-if ([ -d %{buildroot}%{_bindir} ]); then
-    pathfix.py -pni "%{__python3} %{py3_shbang_opts}" %{buildroot}%{python3_sitearch} %{buildroot}%{_bindir}/*
+%py3_install
+if ( [ -d %{buildroot}%{_bindir} ] ); then
+    pathfix.py -pni "%{__python3} %{py3_shbang_opts}" %{buildroot}/usr/lib/python3.9/site-packages/ %{buildroot}%{_bindir}/*
 fi
-
-echo "checking for presence of /usr/lib"
-if ([ -d %{buildroot}/usr/lib/ ]); then
-  echo "/usr/lib/python3.9/site-packages/"
-  %define libhome "/usr/lib/python3.9/site-packages/"
-fi
-if ([ -d %{buildroot}/usr/lib64/ ]); then
-  echo "/usr/lib64/python3.9/site-packages/"
-  %define libhome "/usr/lib64/python3.9/site-packages/"
-fi
-echo %{libhome}
 
 %check
 
@@ -50,8 +36,10 @@ echo %{libhome}
 rm -rf $RPM_BUILD_ROOT
 rm -fR %{_builddir}/%{packname}*
 
-%files -f %{INSTALLED_FILES}
-%{libhome}
+%files
+#/usr/lib64/python3.9/site-packages/%{packname}*
+/usr/lib/python3.9/site-packages/%{packname}*
+#/usr/bin/*
 
 %changelog
 * Mon Feb 1 2021 sagrudd <stephen@mnemosyne.co.uk>

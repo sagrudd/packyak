@@ -73,7 +73,11 @@ PackageHandler = R6::R6Class(
       print(spec_o)
 
       if (build_rpm && !is.null(spec_o)) {
-        fedora$spec2rpm(self, spec_o$get_spec_file())
+        if (self$is_noarch()) {
+          fedora$spec2rpm(self, spec_o$get_spec_file(), "noarch")
+        } else {
+          fedora$spec2rpm(self, spec_o$get_spec_file())
+        }
       }
     },
 
@@ -83,7 +87,7 @@ PackageHandler = R6::R6Class(
         fedora=fedora, follow_suggests=follow_suggests)
     },
 
-    prior_art = function(fedora) {
+    prior_art = function(fedora, force_update=FALSE) {
       # first step - check for prior art ...
       cli::cli_h1(stringr::str_interp("Checking for prior art [${private$pkgname}]..."))
 
@@ -109,7 +113,7 @@ PackageHandler = R6::R6Class(
         cli::cli_alert_info(stringr::str_interp("defined - package == ${self$get_version()}"))
 
         deltaversion <- utils::compareVersion(version, self$get_version())
-        if (deltaversion >= 0) { # -1 when b is later than a
+        if (deltaversion >= 0 || force_update == FALSE) { # -1 when b is later than a
           private$release <- as.integer(patch) + 1
           cli::cli_alert_success("Prior art *has* been established")
           return(TRUE)
@@ -134,10 +138,16 @@ PackageHandler = R6::R6Class(
     },
 
     canonical_name = function(set) {
+      xname <- private$pkgname
+      if (xname == "python-dateutil")
+        xname <- "dateutil"
+      else if (xname == "PyYAML")
+        xname <- "pyyaml"
+
       if (self$language=="Python") {
-        return(paste0("python3-", private$pkgname))
+        return(paste0("python3-", xname))
       } else if (self$language=="R") {
-        return(paste0("r_", private$pkgname))
+        return(paste0("r_", xname))
       } else {
         silent_stop("Not an expected language")
       }
@@ -234,7 +244,8 @@ PackageHandler = R6::R6Class(
 
           child <- PackYak$new(
             inst, strategy=private$strategy, overwrite=overwrite,
-            build_rpm=build_rpm, fedora=fedora, follow_suggests=follow_suggests)
+            build_rpm=build_rpm, fedora=fedora, follow_suggests=follow_suggests,
+            context=self$language)
         }
       }
     },

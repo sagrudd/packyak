@@ -34,11 +34,12 @@ Fedora = R6::R6Class(
       return(file.path(self$get_rpmbuild_dir(), "SOURCES"))
     },
 
-    spec2rpm = function(package, specfile) {
+    spec2rpm = function(package, specfile, architecture=NULL) {
       cli::cli_h2(stringr::str_interp("building RPM package from [${specfile}]"))
 
-
-      architecture <- self$get_architecture()
+      if (is.null(architecture)) {
+        architecture <- self$get_architecture()
+      }
       fname <- tools::file_path_sans_ext(basename(specfile))
       version <- package$get_version()
       release <- package$get_release()
@@ -90,6 +91,8 @@ Fedora = R6::R6Class(
           cli::cli_alert_warning(stringr::str_interp("command ${command3} exited with fail code [${status3}]"))
           stop()
         }
+      } else {
+
       }
 
       #silent_stop("development stop")
@@ -100,7 +103,7 @@ Fedora = R6::R6Class(
 
       cli::cli_alert_info(stringr::str_interp("looking for package [${pkgname}]"))
 
-      lookup_key <- paste0("^", pkgname, ".(noarch|", self$get_architecture(),")")
+      lookup_key <- paste0("(?i)^", pkgname, ".(noarch|", self$get_architecture(),")")
 
       keys <- which(stringr::str_detect(private$prior_art$V1, lookup_key))
       if (length(keys)==0) {
