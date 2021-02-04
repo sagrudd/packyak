@@ -103,7 +103,7 @@ PyPi = R6::R6Class(
 
 
       # extract package dependencies
-      command = stringr::str_interp("~/.local/bin/johnnydep --output-format pinned ${private$pkgname}")
+      command = stringr::str_interp("johnnydep --output-format pinned ${private$pkgname}")
       johnnydata <- system(command, intern=TRUE) %>%
         stringr::str_extract("^.*(?=\\=\\=)")
       private$depends <- johnnydata[!stringr::str_detect(johnnydata, private$pkgname)]
