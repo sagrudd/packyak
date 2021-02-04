@@ -108,6 +108,7 @@ SpecOps = R6::R6Class(
       private$update_license()
       private$update_architecture()
       private$update_dependencies()
+      private$update_python_files()
 
       if (!is.null(comments)) {
         private$spec_lines <- c(
@@ -194,6 +195,13 @@ SpecOps = R6::R6Class(
           "BuildArch:        noarch\n",
           private$spec_lines[index])
         private$spec_lines[index] <- ammendment
+      }
+    },
+
+    update_python_files = function() {
+      if (private$pkgobj$language == "Python") {
+        private$spec_lines[which(grepl("^%files -n ", private$spec_lines))] <-
+          stringr::str_interp("%files -n ${private$pkgobj$packaged_name}")
       }
     },
 

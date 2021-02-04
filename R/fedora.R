@@ -99,7 +99,11 @@ Fedora = R6::R6Class(
     },
 
 
-    check_prior_art = function(pkgname) {
+    check_prior_art = function(pkgname, skip=TRUE) {
+
+      if (skip) {
+        return(NULL)
+      }
 
       cli::cli_alert_info(stringr::str_interp("looking for package [${pkgname}]"))
 

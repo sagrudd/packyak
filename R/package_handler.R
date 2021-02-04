@@ -145,6 +145,22 @@ PackageHandler = R6::R6Class(
         xname <- "pyyaml"
 
       if (self$language=="Python") {
+        return(paste0("python-", xname))
+      } else if (self$language=="R") {
+        return(paste0("r_", xname))
+      } else {
+        silent_stop("Not an expected language")
+      }
+    },
+
+    packaged_name = function(set) {
+      xname <- private$pkgname
+      if (xname == "python-dateutil")
+        xname <- "dateutil"
+      else if (xname == "PyYAML")
+        xname <- "pyyaml"
+
+      if (self$language=="Python") {
         return(paste0("python3-", xname))
       } else if (self$language=="R") {
         return(paste0("r_", xname))
