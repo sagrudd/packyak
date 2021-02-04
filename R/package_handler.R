@@ -155,15 +155,11 @@ PackageHandler = R6::R6Class(
 
     packaged_name = function(set) {
       xname <- private$pkgname
-      if (xname == "python-dateutil")
-        xname <- "dateutil"
-      else if (xname == "PyYAML")
-        xname <- "pyyaml"
 
       if (self$language=="Python") {
-        return(paste0("python3-", xname))
+        return(paste0("python3-bio-", xname))
       } else if (self$language=="R") {
-        return(paste0("r_", xname))
+        return(paste0("r_bio_", xname))
       } else {
         silent_stop("Not an expected language")
       }
@@ -275,7 +271,7 @@ PackageHandler = R6::R6Class(
       } else {
         cli::cli_alert_info(stringr::str_interp("installing package [${private$pkgname}]"))
         so <- SpecOps$new(self, fedora=fedora, overwrite=overwrite)
-        private$strategy$register(private$pkgname, so$get_rpm())
+        private$strategy$register(private$pkgname, self$packaged_name)
         return(so)
       }
     }

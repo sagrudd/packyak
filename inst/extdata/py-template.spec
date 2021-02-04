@@ -20,18 +20,18 @@ yet been implemented - this is a TODO
 
 %description %_description
 
-%package -n python3-%{packname}
-%{?python_provide:%python_provide python3-%{packname}}
+%package -n python3-bio-%{packname}
+%{?python_provide:%python_provide python3-bio-%{packname}}
 
 Summary:        %{summary}
-BuildRequires:    python-devel
-Requires:         python-devel
+BuildRequires:    python3.8
+Requires:         python3.8
 
-%description -n python3-%{packname} %_description
+%description -n python3-bio-%{packname} %_description
 
 %prep
 %autosetup -p1 -n %{packname}-%{version}
-pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
+pathfix.py -pni "/usr/bin/python%{pyversion} -s" .
 
 %build
 CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
@@ -41,7 +41,7 @@ CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
 CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
   /usr/bin/python%{pyversion} setup.py  install -O1 --skip-build --root %{buildroot}
 if ( [ -d %{buildroot}%{_bindir} ] ); then
-    pathfix.py -pni "%{__python3} %{py3_shbang_opts}" %{buildroot}/usr/lib/python%{pyversion}/site-packages/ %{buildroot}%{_bindir}/*
+    pathfix.py -pni "/usr/bin/python%{pyversion} -s" %{buildroot}/usr/lib/python%{pyversion}/site-packages/ %{buildroot}%{_bindir}/*
 fi
 
 %check
@@ -52,9 +52,11 @@ rm -fR %{_builddir}/%{packname}*
 
 %files -n python3-pandas
 /usr/lib/python%{pyversion}/site-packages/%{packname}*
-/usr/bin/*
+#/usr/bin/*
 
 %changelog
+* Thu Feb 4 2021 sagrudd <stephen@mnemosyne.co.uk>
+- rejig of all python libraries to use `python3-bio` product suffix
 * Mon Feb 1 2021 sagrudd <stephen@mnemosyne.co.uk>
 - updated the R template for usage in Python deployments
 - somewhat adherent to https://docs.fedoraproject.org/en-US/packaging-guidelines/Python/

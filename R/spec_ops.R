@@ -207,12 +207,15 @@ SpecOps = R6::R6Class(
 
 
     update_dependencies = function() {
-      build_requires <- "tex(latex) R-core = %{rversion}"
-      requires <- "tex(latex) R-core = %{rversion}"
-      if (private$pkgobj$language == "Python") {
-        build_requires <- "python-devel"
-        requires <- "python-devel"
-      }
+
+      build_requires <- private$spec_lines[
+        which(grepl("^BuildRequires:", private$spec_lines))] %>%
+        stringr::str_replace("^BuildRequires:\\s*", "")
+
+      requires <- private$spec_lines[
+        which(grepl("^Requires:", private$spec_lines))] %>%
+        stringr::str_replace("^Requires:\\s*", "")
+
       dependencies <- private$pkgobj$get_depends()
       if(!is.null(dependencies)) {
         cli::cli_alert(stringr::str_interp("linking dependencies [${paste(dependencies)}]"))
@@ -222,10 +225,7 @@ SpecOps = R6::R6Class(
         }
       }
 
-
       sys_reqs <- private$pkgobj$get_sys_reqs()
-      #print(sys_reqs)
-
       if (!is.null(sys_reqs)) {
         cli::cli_alert(stringr::str_interp("linking sys_reqs [${paste(sys_reqs)}]"))
         #silent_stop("testing")
