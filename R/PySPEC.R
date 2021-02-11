@@ -35,8 +35,11 @@ PySPEC = R6::R6Class(
           specversion <- self$get_specced_version()
 
           # is version here newer than version in SPECfile
-          deltaversion <- utils::compareVersion(
-            specversion, private$package_version)
+          deltaversion = 0
+          if (specversion != private$package_version) {
+            deltaversion <- utils::compareVersion(
+              specversion, private$package_version)
+          }
 
           # has the python build version been updated???
           deltapyversion <- utils::compareVersion(
