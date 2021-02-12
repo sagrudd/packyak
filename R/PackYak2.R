@@ -13,7 +13,6 @@ PackYak2 = R6::R6Class(
         if (pypackage$create_specfile()) {
           if (pypackage$spec_file_exists()) {
             cli::cli_alert_success("updating specfile for package")
-            silent_stop("yikes ... check this")
             pypackage$update_spec()
           } else {
             cli::cli_alert_success("creating specfile for package")

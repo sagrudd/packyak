@@ -160,6 +160,9 @@ SPECtacular = R6::R6Class(
           download_link <- self$get_download_link()
 
           # update the SPEC summary field
+          self$set_something_in_spec(
+            stringr::str_pad("Summary:", 17, side="right"),
+            stringr::str_interp("PackYak automated rebuild of package = ${private$package_name} (${private$package_version})"))
 
           # update the buildrequires and fields (allow manual fields to be retained)
 

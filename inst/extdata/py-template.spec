@@ -39,7 +39,7 @@ CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
 
 %install
 CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
-  /usr/bin/python%{pyversion} setup.py  install -O1 --skip-build --root %{buildroot}
+  /usr/bin/python%{pyversion} setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 if ( [ -d %{buildroot}%{_bindir} ] ); then
     pathfix.py -pni "/usr/bin/python%{pyversion} -s" %{buildroot}/usr/lib/python%{pyversion}/site-packages/ %{buildroot}%{_bindir}/*
 fi
@@ -50,11 +50,13 @@ fi
 rm -rf $RPM_BUILD_ROOT
 rm -fR %{_builddir}/%{packname}*
 
-%files -n packyak_rpm_name
-/usr/lib/python%{pyversion}/site-packages/%{packname}*
-#/usr/bin/*
+%files -f INSTALLED_FILES
+%defattr(-,root,root)
 
 %changelog
+* Fri Feb 12 2021 sagrudd <stephen@mnemosyne.co.uk>
+- rework of the python setup install to be less dependent on manual intervention
+  and finding files ...
 * Thu Feb 4 2021 sagrudd <stephen@mnemosyne.co.uk>
 - rejig of all python libraries to use `python3-bio` product suffix
 * Mon Feb 1 2021 sagrudd <stephen@mnemosyne.co.uk>
