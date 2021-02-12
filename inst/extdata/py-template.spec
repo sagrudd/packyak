@@ -3,6 +3,7 @@
 %global packrel 1
 %global debug_package %{nil}
 %global _python_bytecompile_errors_terminate_build 0
+%define __brp_python_bytecompile %{nil}
 
 Name:             symbioinfo-python-six
 Version:          1.8.8
