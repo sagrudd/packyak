@@ -89,6 +89,12 @@ SPECtacular = R6::R6Class(
         # set `Source0:          `
         self$set_something_in_spec(stringr::str_pad("Source0:", 17, side="right"), self$get_download_link())
 
+        # set `Provides:`
+        self$set_something_in_spec(
+          stringr::str_pad("Provides:", 17, side="right"),
+          stringr::str_interp("python${private$python_version}dist(${private$package_name})"))
+
+
         # set `BuildRequires:    `
         build_requires_tag <- paste(
           stringr::str_pad("BuildRequires:", 17, side="right"),

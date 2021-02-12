@@ -25,6 +25,7 @@ yet been implemented - this is a TODO
 %{?python_provide:%python_provide python3-bio-%{packname}}
 
 Summary:        %{summary}
+Provides:         something
 BuildRequires:    python3.8
 Requires:         python3.8
 
