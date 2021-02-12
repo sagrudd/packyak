@@ -102,7 +102,8 @@ SPECtacular = R6::R6Class(
         self$set_something_in_spec(stringr::str_pad("Requires:", 17, side="right"), stringr::str_interp("python${private$python_version}"))
 
 
-        self$set_something_in_spec("%files -n ", self$canoninal_rpm_name())
+        self$set_something_in_spec("%files -n ",
+                                   paste(self$canoninal_rpm_name(),"-f INSTALLED_FILES"))
 
 
         for (dependency in self$trawl_dependencies()) {

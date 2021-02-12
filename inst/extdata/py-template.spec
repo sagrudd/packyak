@@ -50,7 +50,7 @@ fi
 rm -rf $RPM_BUILD_ROOT
 rm -fR %{_builddir}/%{packname}*
 
-%files -f INSTALLED_FILES
+%files -n $RPM_DESTINATION$ -f INSTALLED_FILES
 %defattr(-,root,root)
 
 %changelog
