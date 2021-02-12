@@ -111,10 +111,15 @@ PySPEC = R6::R6Class(
 
     },
 
+
+    canoninal_rpm_name = function() {
+      return(paste0("pyton3-bio-", private$package_name))
+    },
+
     trawl_dependencies = function() {
       cli::cli_alert_info("trawling PyPi dependencies using johnnydep ...")
 
-      command = stringr::str_interp("johnnydep --output-format pinned ${private$package_name}")
+      command = stringr::str_interp("/usr/bin/johnnydep --output-format pinned ${private$package_name}")
       johnnydata <- system(command, intern=TRUE) %>%
         stringr::str_extract("^.*(?=\\=\\=)")
       return(johnnydata)

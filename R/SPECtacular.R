@@ -49,6 +49,10 @@ SPECtacular = R6::R6Class(
       return(private$valid_package)
     },
 
+    canoninal_rpm_name = function() {
+      silent_stop("canonical_rpm called at root")
+    },
+
 
     create_spec = function() {
       cli::cli_h2(stringr::str_interp("ab initio build of SPECfile [${private$package_name}]"))
@@ -96,6 +100,9 @@ SPECtacular = R6::R6Class(
           stringr::str_pad("Requires:", 17, side="right"),
           stringr::str_interp("python${private$python_version}"))
         self$set_something_in_spec(stringr::str_pad("Requires:", 17, side="right"), stringr::str_interp("python${private$python_version}"))
+
+
+        self$set_something_in_spec("%files -n ", self$canoninal_rpm_name())
 
 
         for (dependency in self$trawl_dependencies()) {

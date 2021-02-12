@@ -50,7 +50,7 @@ fi
 rm -rf $RPM_BUILD_ROOT
 rm -fR %{_builddir}/%{packname}*
 
-%files -n python3-pandas
+%files -n packyak_rpm_name
 /usr/lib/python%{pyversion}/site-packages/%{packname}*
 #/usr/bin/*
 
