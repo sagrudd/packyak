@@ -115,10 +115,10 @@ SPECtacular = R6::R6Class(
 
             self$append_something_in_spec(
               build_requires_tag,
-              paste(stringr::str_pad("BuildRequires:", 17, side="right"), dependency))
+              paste(stringr::str_pad("BuildRequires:", 17, side="right"), self$canoninal_rpm_name(dependency)))
             self$append_something_in_spec(
               requires_tag,
-              paste(stringr::str_pad("Requires:", 17, side="right"), dependency))
+              paste(stringr::str_pad("Requires:", 17, side="right"), self$canoninal_rpm_name(dependency)))
           }
         }
 

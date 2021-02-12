@@ -112,8 +112,8 @@ PySPEC = R6::R6Class(
     },
 
 
-    canoninal_rpm_name = function() {
-      return(paste0("pyton3-bio-", private$package_name))
+    canoninal_rpm_name = function(pkgname=private$package_name) {
+      return(paste0("python3-bio-", pkgname))
     },
 
     trawl_dependencies = function() {
