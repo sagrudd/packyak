@@ -105,8 +105,8 @@ SPECtacular = R6::R6Class(
         self$set_something_in_spec("%files -n ",
                                    paste(self$canoninal_rpm_name(),"-f INSTALLED_FILES"))
 
-
-        for (dependency in self$trawl_dependencies()) {
+        dependencies <- self$trawl_dependencies()
+        for (dependency in dependencies) {
           if (dependency != private$package_name) {
             cli::cli_alert(stringr::str_interp("linking dependency [${dependency}]"))
             self$append_something_in_spec(
@@ -118,7 +118,7 @@ SPECtacular = R6::R6Class(
           }
         }
 
-        for (dependency in self$trawl_dependencies()) {
+        for (dependency in dependencies) {
           if (dependency != private$package_name) {
             PackYak2$new(dependency)
           }
