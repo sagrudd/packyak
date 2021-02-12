@@ -92,6 +92,9 @@ PySPEC = R6::R6Class(
       mytable <- private$pick_table()
 
       links = mytable %>% rvest::html_nodes("a") %>% rvest::html_attr("href")
+      print(links)
+
+      link = "unresolvable link ..."
 
       if (any(stringr::str_detect(links, "^https.*tar.gz"))) {
         httplinks <- stringr::str_which(links, "^https.*tar.gz")
@@ -104,7 +107,7 @@ PySPEC = R6::R6Class(
       } else {
         cli::cli_alert_danger(stringr::str_interp("PyPi without expected suffix ... [${private$pkgname}]"))
       }
-      print(link)
+      return(link)
 
     },
 

@@ -100,17 +100,19 @@ SPECtacular = R6::R6Class(
 
         for (dependency in self$trawl_dependencies()) {
 
-          cli::cli_alert(stringr::str_interp("linking dependency [${dependency}]"))
+          if (dependency != private$package_name) {
 
-          PackYak2$new(dependency)
+            cli::cli_alert(stringr::str_interp("linking dependency [${dependency}]"))
 
-          self$append_something_in_spec(
-            build_requires_tag,
-            paste(stringr::str_pad("BuildRequires:", 17, side="right"), dependency))
-          self$append_something_in_spec(
-            requires_tag,
-            paste(stringr::str_pad("Requires:", 17, side="right"), dependency))
+            PackYak2$new(dependency)
 
+            self$append_something_in_spec(
+              build_requires_tag,
+              paste(stringr::str_pad("BuildRequires:", 17, side="right"), dependency))
+            self$append_something_in_spec(
+              requires_tag,
+              paste(stringr::str_pad("Requires:", 17, side="right"), dependency))
+          }
         }
 
 
