@@ -140,6 +140,8 @@ SpecOps = R6::R6Class(
         stringr::str_interp("%global packname ${private$pkgobj$get_pkg_name()}")
       private$spec_lines[which(grepl("^Name:", private$spec_lines))] <-
         stringr::str_interp("Name:             ${private$pkgname}")
+      private$spec_lines[which(grepl("Provides:", private$spec_lines))] <-
+        stringr::str_interp("Provides:        R(${private$pkgobj$get_pkg_name()})")
     },
 
 
@@ -186,6 +188,7 @@ SpecOps = R6::R6Class(
       private$spec_lines[which(grepl("^License", private$spec_lines))] <-
         stringr::str_interp("License:          ${license}")
     },
+
 
 
     update_architecture = function() {

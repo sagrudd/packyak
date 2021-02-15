@@ -11,6 +11,7 @@ License:          GPL-2 | GPL-3
 URL:              http://cran.rstudio.com/web/packages/zoo/index.html
 Group:            Applications/Bioinformatics
 Summary:          Automated Build of package = zoo (1.8.8)
+Provides:         R(provides)
 BuildRequires:    tex(latex) R-core = %{rversion}
 Requires:         tex(latex) R-core = %{rversion}
 
