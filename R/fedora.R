@@ -185,18 +185,18 @@ Fedora = R6::R6Class(
 
         print(private$installed_packages)
 
-        lines <- system("dnf list all", intern=TRUE)[-c(1)]
-        lines <- lines[!lines %in% c("Available Packages", "Installed Packages")]
-        items <- lines %>%
-          stringr::str_split("\\s+", n=3) %>%
-          purrr::flatten() %>%
-          stringr::str_trim()
-        private$prior_art <-
-          tibble::as_tibble(matrix(items, ncol=3, byrow=TRUE, dimnames=list(NULL, c("V1", "V2", "V3"))))
-        # and strip out the locally installed resources - they complicate ...
-        private$prior_art <-
-          private$prior_art[
-            which(!stringr::str_detect(private$prior_art$V3, "commandline")),]
+        # lines <- system("dnf list all", intern=TRUE)[-c(1)]
+        # lines <- lines[!lines %in% c("Available Packages", "Installed Packages")]
+        # items <- lines %>%
+        #   stringr::str_split("\\s+", n=3) %>%
+        #   purrr::flatten() %>%
+        #   stringr::str_trim()
+        # private$prior_art <-
+        #   tibble::as_tibble(matrix(items, ncol=3, byrow=TRUE, dimnames=list(NULL, c("V1", "V2", "V3"))))
+        # # and strip out the locally installed resources - they complicate ...
+        # private$prior_art <-
+        #   private$prior_art[
+        #     which(!stringr::str_detect(private$prior_art$V3, "commandline")),]
 
 
         private$check_rpm_build()
