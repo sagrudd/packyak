@@ -62,6 +62,7 @@ PackageStrategy = R6::R6Class(
         zlib = "zlib-devel",
         libpng = "libpng-devel",
         FreeType = "freetype",
+        freetype2 = "freetype-devel",
         libbz2 = "bzip2-devel",
         libjpeg = "libjpeg-turbo",
         libsodium = "libsodium-devel",
