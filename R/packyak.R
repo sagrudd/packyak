@@ -75,13 +75,7 @@ PackYak = R6::R6Class(
           silent_stop("END")
         } else {
 
-          if (!is.null(context) && context == "Python") {
-            if (self$is_pypi_resource(fedora)) {
-              cli::cli_alert_success("successfully loaded a PyPi page")
-            } else {
-              silent_stop("This package cannot be found within Python context")
-            }
-          } else {
+
 
             if (self$is_bioconductor_resource()) {
               cli::cli_alert_success("successfully loaded a Bioconductor page")
@@ -97,7 +91,7 @@ PackYak = R6::R6Class(
               silent_stop("This package cannot be found at BioC or CRAN")
             }
 
-          }
+
 
           if (!is.null(private$package_page)) {
             cli::cli_alert_success("Proto-package object created")
@@ -138,20 +132,6 @@ PackYak = R6::R6Class(
         private$package_page <- Bioconductor$new(
           pkgname=private$package_name, htmlpage=lookup,
           strategy=private$strategy, url=bioc)
-        return(TRUE)
-      }
-      return(FALSE)
-    },
-
-    is_pypi_resource = function(fedora) {
-      pypi <- stringr::str_interp(
-        "https://pypi.org/project/${private$package_name}/")
-      cli::cli_alert(stringr::str_interp("checking PyPi [{pypi}]"))
-      lookup <- httr::GET(pypi)
-      if (lookup$status_code == 200) {
-        private$package_page <- PyPi$new(
-          pkgname=private$package_name, htmlpage=lookup,
-          strategy=private$strategy, url=pypi, fedora=fedora)
         return(TRUE)
       }
       return(FALSE)
