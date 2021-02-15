@@ -76,7 +76,7 @@ PackageStrategy = R6::R6Class(
         if (item %in% names(corpus)) {
           self$register(item, as.character(corpus[item]))
         } else {
-          silent_stop(stringr::str_interp("new [${name}] sys_req [\"${item}\"]"))
+          cli::cli_alert_danger(stringr::str_interp("new [${name}] sys_req [\"${item}\"]"))
         }
       }
 
