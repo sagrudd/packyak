@@ -81,8 +81,6 @@ PackYak = R6::R6Class(
               cli::cli_alert_success("successfully loaded a Bioconductor page")
             } else if (self$is_cran_resource()) {
               cli::cli_alert_success("successfully loaded a CRAN page")
-            } else if (self$is_pypi_resource(fedora)) {
-              cli::cli_alert_success("successfully loaded a PyPi page")
             } else if (self$is_bioconductor_annotation()) {
               cli::cli_alert_success("successfully loaded a Bioconductor annotation page")
             } else if (self$is_bioconductor_experiment()) {
